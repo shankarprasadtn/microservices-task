@@ -15,6 +15,7 @@ The application contains the following services:
 
 This deployment includes:
 
+
 - Kubernetes Deployments
 - Kubernetes Services
 - Resource Requests and Limits
