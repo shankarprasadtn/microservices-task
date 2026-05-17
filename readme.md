@@ -617,17 +617,4 @@ Browser test using Minikube IP
 <img width="359" height="66" alt="image" src="https://github.com/user-attachments/assets/8796ef6a-9109-4c8c-9a1b-0b8f1d0e427c" />
 ---
 
-# Expected Outcome
 
-After successful deployment:
-
-- All pods should be running
-- Services should communicate successfully
-- Gateway should route requests properly
-- APIs should be accessible using Minikube IP
-- Ingress routing should work correctly
-- Health checks should pass
-
----
-
----
