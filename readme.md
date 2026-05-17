@@ -596,12 +596,29 @@ minikube delete
 
 | Screenshot | Description |
 |---|---|
-| pods.png | Running pods |
-| services.png | Kubernetes services |
-| deployments.png | Deployments |
-| logs.png | Gateway logs |
-| browser-test.png | Browser test using Minikube IP |
+| Minikube |
+<img width="194" height="89" alt="image" src="https://github.com/user-attachments/assets/02e344d7-d71d-4897-b9a2-dfe482147dd5" />
 
+| Running pods |
+<img width="263" height="88" alt="image" src="https://github.com/user-attachments/assets/15fa59ba-77f4-478d-900e-b776c1549c22" />
+
+| services.png | 
+<img width="262" height="93" alt="image" src="https://github.com/user-attachments/assets/5bcb5a27-26f3-4b43-84df-8deb61cc18c2" />
+
+| Kubernetes services |
+<img width="191" height="89" alt="image" src="https://github.com/user-attachments/assets/73da432e-bbae-460e-a3e2-c9e0455e31cf" />
+
+| deployments.png| 
+<img width="189" height="80" alt="image" src="https://github.com/user-attachments/assets/60f96d09-ab03-4b62-8765-d9c9cf200e78" />
+
+| logs.png | 
+<img width="260" height="79" alt="image" src="https://github.com/user-attachments/assets/4de3d3c0-5502-494c-a1a2-04004eea98e4" />
+
+| browser-test.png | 
+
+
+| Browser test using Minikube IP |
+<img width="359" height="66" alt="image" src="https://github.com/user-attachments/assets/8796ef6a-9109-4c8c-9a1b-0b8f1d0e427c" />
 ---
 
 # Expected Outcome
@@ -616,14 +633,5 @@ After successful deployment:
 - Health checks should pass
 
 ---
-
-
-Include:
-
-- Deployment YAML files
-- Service YAML files
-- Ingress YAML file
-- README.md
-- Screenshots
 
 ---
