@@ -21,8 +21,11 @@ This deployment includes:
 - Liveness and Readiness Probes
 - Internal Service Communication
 - Optional Ingress Configuration
-
+- Infographic Summary
 ---
+# Infographic Summary
+
+<img width="326" height="211" alt="image" src="https://github.com/user-attachments/assets/091f3ab1-28b8-4087-8bb4-d0657b3a8322" />
 
 # Environment Details
 
