@@ -1,8 +1,8 @@
-# Microservices Kubernetes Deployment using Minikube
+# Microservices Kubernetes Deployment using Minikube on Windows
 
 ## Overview
 
-This project demonstrates deployment of a Node.js based microservices application on Kubernetes using Minikube.
+This project demonstrates deployment of a Node.js based microservices application on Kubernetes using Minikube on a Windows machine.
 
 The application contains the following services:
 
@@ -13,11 +13,11 @@ The application contains the following services:
 | Order Service | 3002 |
 | Gateway Service | 3003 |
 
-The deployment includes:
+This deployment includes:
 
 - Kubernetes Deployments
 - Kubernetes Services
-- Resource Requests and Limits
+- Resource Limits and Requests
 - Liveness and Readiness Probes
 - Internal Service Communication
 - Optional Ingress Configuration
@@ -26,108 +26,107 @@ The deployment includes:
 
 # System Requirements
 
-## Operating System
-
-- Ubuntu / Linux
-- Windows with WSL2
-- macOS
+- Windows 10 or Windows 11
+- Administrator Access
+- Internet Connection
+- Minimum 8GB RAM Recommended
 
 ---
 
-# Required Software Installation
+# Software Installation
 
-## 1. Install Docker
+## 1. Install Docker Desktop
 
-### Ubuntu
+Download Docker Desktop:
 
-```bash
-sudo apt update
-
-sudo apt install docker.io -y
+```text id="93ebgn"
+https://www.docker.com/products/docker-desktop/
 ```
 
-Enable Docker:
+Install Docker Desktop and enable:
 
-```bash
-sudo systemctl enable docker
-sudo systemctl start docker
-```
+- WSL2 Backend
+- Kubernetes Support (Optional)
 
-Verify installation:
+After installation, verify Docker:
 
-```bash
+Open PowerShell:
+
+```powershell
 docker --version
 ```
 
+Expected output:
+
+```text id="3mkjlwm"
+Docker version xx.x.x
+```
+
 ---
 
-## 2. Install kubectl
+# 2. Install kubectl
 
-Download kubectl:
+Open PowerShell as Administrator.
 
-```bash
-curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl"
+Install kubectl using Chocolatey:
+
+```powershell
+choco install kubernetes-cli -y
 ```
 
-Make executable:
+Or using winget:
 
-```bash
-chmod +x kubectl
-```
-
-Move to system path:
-
-```bash
-sudo mv kubectl /usr/local/bin/
+```powershell
+winget install -e --id Kubernetes.kubectl
 ```
 
 Verify installation:
 
-```bash
+```powershell
 kubectl version --client
 ```
 
 ---
 
-## 3. Install Minikube
+# 3. Install Minikube
 
-Download Minikube:
+Install Minikube using Chocolatey:
 
-```bash
-curl -LO https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64
+```powershell
+choco install minikube -y
 ```
 
-Install Minikube:
+Or using winget:
 
-```bash
-sudo install minikube-linux-amd64 /usr/local/bin/minikube
+```powershell
+winget install Kubernetes.minikube
 ```
 
 Verify installation:
 
-```bash
+```powershell
 minikube version
 ```
 
 ---
 
-# Start Kubernetes Cluster
+# Start Minikube Cluster
 
-Start Minikube:
+Start Minikube using Docker driver:
 
-```bash
+```powershell
 minikube start --driver=docker
 ```
 
-Check cluster status:
+Verify cluster status:
 
-```bash
+```powershell
 minikube status
 ```
 
 Expected output:
 
-```text id="72p8t4"
+```text id="omx7ql"
 host: Running
 kubelet: Running
 apiserver: Running
@@ -140,21 +139,23 @@ kubeconfig: Configured
 
 Enable ingress addon:
 
-```bash
+```powershell
 minikube addons enable ingress
 ```
 
 Verify ingress controller:
 
-```bash
+```powershell
 kubectl get pods -n ingress-nginx
 ```
 
 ---
 
-# Project Structure
+# Project Folder Structure
 
-```text id="3kt0xd"
+Create the following structure:
+
+```text id="4vljlwm"
 submission/
 ├── deployments/
 │   ├── user-service.yaml
@@ -179,39 +180,41 @@ submission/
 
 # Build Docker Images
 
-Configure terminal to use Minikube Docker daemon:
+Open PowerShell inside project root folder.
 
-```bash
-eval $(minikube docker-env)
+Configure Docker environment for Minikube:
+
+```powershell
+& minikube -p minikube docker-env --shell powershell | Invoke-Expression
 ```
 
 Build User Service image:
 
-```bash
-docker build -t user-service:latest ./user-service
+```powershell
+docker build -t user-service:latest .\user-service
 ```
 
 Build Product Service image:
 
-```bash
-docker build -t product-service:latest ./product-service
+```powershell
+docker build -t product-service:latest .\product-service
 ```
 
 Build Order Service image:
 
-```bash
-docker build -t order-service:latest ./order-service
+```powershell
+docker build -t order-service:latest .\order-service
 ```
 
 Build Gateway Service image:
 
-```bash
-docker build -t gateway-service:latest ./gateway-service
+```powershell
+docker build -t gateway-service:latest .\gateway-service
 ```
 
 Verify images:
 
-```bash
+```powershell
 docker images
 ```
 
@@ -221,43 +224,69 @@ docker images
 
 ## Apply Deployments
 
-```bash
-kubectl apply -f deployments/
+```powershell
+kubectl apply -f deployments\
 ```
+
+Expected output:
+
+```text id="hjlwm0"
+deployment.apps/user-service created
+deployment.apps/product-service created
+deployment.apps/order-service created
+deployment.apps/gateway-service created
+```
+
+---
 
 ## Apply Services
 
-```bash
-kubectl apply -f services/
+```powershell
+kubectl apply -f services\
 ```
 
-## Apply Ingress (Optional)
+Expected output:
 
-```bash
-kubectl apply -f ingress/
+```text id="jlwm42"
+service/user-service created
+service/product-service created
+service/order-service created
+service/gateway-service created
+```
+
+---
+
+## Apply Ingress Configuration (Optional)
+
+```powershell
+kubectl apply -f ingress\
 ```
 
 ---
 
 # Verify Kubernetes Resources
 
-## Check Pods
+## Check Running Pods
 
-```bash
+```powershell
 kubectl get pods
 ```
 
-Expected:
+Expected output:
 
-```text id="kzjlwm"
-All pods should be in Running state
+```text id="jlwm5s"
+NAME                                READY   STATUS    RESTARTS   AGE
+gateway-service-xxxxx              1/1     Running   0          2m
+order-service-xxxxx                1/1     Running   0          2m
+product-service-xxxxx              1/1     Running   0          2m
+user-service-xxxxx                 1/1     Running   0          2m
 ```
 
 ---
 
 ## Check Services
 
-```bash
+```powershell
 kubectl get svc
 ```
 
@@ -265,7 +294,7 @@ kubectl get svc
 
 ## Check Deployments
 
-```bash
+```powershell
 kubectl get deployments
 ```
 
@@ -275,7 +304,7 @@ kubectl get deployments
 
 ## Test User Service from Order Service
 
-```bash
+```powershell
 kubectl exec -it deployment/order-service -- curl http://user-service:3000
 ```
 
@@ -283,7 +312,7 @@ kubectl exec -it deployment/order-service -- curl http://user-service:3000
 
 ## Test Product Service from Order Service
 
-```bash
+```powershell
 kubectl exec -it deployment/order-service -- curl http://product-service:3001
 ```
 
@@ -291,66 +320,72 @@ kubectl exec -it deployment/order-service -- curl http://product-service:3001
 
 ## Test Order Service from Gateway Service
 
-```bash
+```powershell
 kubectl exec -it deployment/gateway-service -- curl http://order-service:3002
+```
+
+Expected response:
+
+```text id="jlwm9v"
+Service is reachable
 ```
 
 ---
 
-# Access Application Using Local IP
+# Access Application using Local IP
 
 Get Minikube IP:
 
-```bash
+```powershell
 minikube ip
 ```
 
 Example output:
 
-```text id="a4gjmo"
+```text id="jlwm8q"
 192.168.49.2
 ```
 
 ---
 
-# Expose Gateway Service
+# Expose Gateway Service using NodePort
 
-Temporarily expose Gateway Service using NodePort:
+Run:
 
-```bash
-kubectl expose deployment gateway-service \
---type=NodePort \
---port=3003 \
---target-port=3003 \
+```powershell
+kubectl expose deployment gateway-service `
+--type=NodePort `
+--port=3003 `
+--target-port=3003 `
 --name=gateway-nodeport
 ```
 
-Check service:
+Check NodePort service:
 
-```bash
+```powershell
 kubectl get svc
 ```
 
 Example output:
 
-```text id="uljlwm"
+```text id="jlwm2m"
 NAME               TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)
-gateway-nodeport   NodePort   10.98.10.10    <none>        3003:32003/TCP
+gateway-nodeport   NodePort   10.96.10.10    <none>        3003:32003/TCP
 ```
 
 ---
 
 # Access Gateway Service from Browser
 
-Use the following URL:
+Open browser:
 
-```text id="4l6vym"
+```text id="jlwm6c"
 http://192.168.49.2:32003
 ```
 
 Example API routes:
 
-```text id="c0hzps"
+```text id="jlwm0h"
 http://192.168.49.2:32003/api/users
 
 http://192.168.49.2:32003/api/products
@@ -364,45 +399,49 @@ http://192.168.49.2:32003/api/orders
 
 Check ingress:
 
-```bash
+```powershell
 kubectl get ingress
 ```
 
 Get Minikube IP:
 
-```bash
+```powershell
 minikube ip
 ```
 
 Example:
 
-```text id="0n1m31"
+```text id="jlwm4n"
 192.168.49.2
 ```
 
-Edit hosts file.
+---
 
-Linux/macOS:
+# Update Windows Hosts File
 
-```bash
-sudo nano /etc/hosts
-```
+Open Notepad as Administrator.
 
-Windows:
+Open file:
 
-```text id="fs8c1v"
+```text id="jlwm5b"
 C:\Windows\System32\drivers\etc\hosts
 ```
 
-Add:
+Add entry:
 
-```text id="06xk6m"
+```text id="jlwm6x"
 192.168.49.2 micro.local
 ```
 
-Test ingress routes:
+Save the file.
 
-```text id="95c2to"
+---
+
+# Test Ingress Routes
+
+Open browser:
+
+```text id="jlwm0x"
 http://micro.local/api/users
 
 http://micro.local/api/products
@@ -416,19 +455,19 @@ http://micro.local/api/orders
 
 Gateway Service logs:
 
-```bash
+```powershell
 kubectl logs deployment/gateway-service
 ```
 
 Order Service logs:
 
-```bash
+```powershell
 kubectl logs deployment/order-service
 ```
 
 User Service logs:
 
-```bash
+```powershell
 kubectl logs deployment/user-service
 ```
 
@@ -438,11 +477,15 @@ kubectl logs deployment/user-service
 
 ## Pod CrashLoopBackOff
 
-```bash
+Check logs:
+
+```powershell
 kubectl logs <pod-name>
 ```
 
-```bash
+Describe pod:
+
+```powershell
 kubectl describe pod <pod-name>
 ```
 
@@ -450,21 +493,27 @@ kubectl describe pod <pod-name>
 
 ## ImagePullBackOff Error
 
-```bash
-eval $(minikube docker-env)
+Reconfigure Docker environment:
+
+```powershell
+& minikube -p minikube docker-env --shell powershell | Invoke-Expression
 ```
 
-Rebuild images if required.
+Rebuild Docker images if required.
 
 ---
 
 ## Service Not Reachable
 
-```bash
+Check services:
+
+```powershell
 kubectl get svc
 ```
 
-```bash
+Check endpoints:
+
+```powershell
 kubectl get endpoints
 ```
 
@@ -472,7 +521,7 @@ kubectl get endpoints
 
 ## Restart Deployment
 
-```bash
+```powershell
 kubectl rollout restart deployment gateway-service
 ```
 
@@ -482,70 +531,75 @@ kubectl rollout restart deployment gateway-service
 
 Delete deployments:
 
-```bash
-kubectl delete -f deployments/
+```powershell
+kubectl delete -f deployments\
 ```
 
 Delete services:
 
-```bash
-kubectl delete -f services/
+```powershell
+kubectl delete -f services\
 ```
 
 Delete ingress:
 
-```bash
-kubectl delete -f ingress/
+```powershell
+kubectl delete -f ingress\
 ```
 
 Stop Minikube:
 
-```bash
+```powershell
 minikube stop
 ```
 
 Delete Minikube cluster:
 
-```bash
+```powershell
 minikube delete
 ```
 
 ---
 
-# Screenshots
+# Screenshots Required
+
+Capture screenshots for:
 
 | Screenshot | Command |
 |---|---|
 | Running Pods | kubectl get pods |
 | Running Services | kubectl get svc |
+| Deployments | kubectl get deployments |
 | Logs | kubectl logs deployment/gateway-service |
-| Local IP Test | Browser output using Minikube IP |
-| Ingress Test | Browser output |
+| Local IP Browser Test | Browser using Minikube IP |
+| Ingress Browser Test | Browser using micro.local |
 
 Store screenshots inside:
 
-```text id="0z9j0v"
-screenshots/
+```text id="jlwm7x"
+screenshots\
 ```
 
 ---
 
 # Expected Outcome
 
-- All pods running successfully
-- Services communicating internally
-- Gateway accessible using local Minikube IP
-- APIs reachable from browser
-- Ingress routing working correctly
-- Health probes passing
+After successful deployment:
+
+- All pods should be running
+- Services should communicate internally
+- Gateway service should be accessible using Minikube IP
+- APIs should be reachable from browser
+- Ingress routing should work successfully
+- Health probes should pass
 
 ---
 
-# Submission
+# Final Submission
 
-Create final ZIP file:
+Create ZIP file:
 
-```text id="8s8qq4"
+```text id="jlwm8z"
 submission.zip
 ```
 
