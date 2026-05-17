@@ -127,7 +127,7 @@ minikube status
 
 Expected output:
 
-```text id="qj91rq"
+```text id="72p8t4"
 host: Running
 kubelet: Running
 apiserver: Running
@@ -154,9 +154,7 @@ kubectl get pods -n ingress-nginx
 
 # Project Structure
 
-Create the following directory structure:
-
-```text id="mjlwm1"
+```text id="3kt0xd"
 submission/
 ├── deployments/
 │   ├── user-service.yaml
@@ -180,8 +178,6 @@ submission/
 ---
 
 # Build Docker Images
-
-Move to project root directory.
 
 Configure terminal to use Minikube Docker daemon:
 
@@ -219,54 +215,6 @@ Verify images:
 docker images
 ```
 
-Expected images:
-
-```text id="tyh0g9"
-user-service
-product-service
-order-service
-gateway-service
-```
-
----
-
-# Kubernetes Deployment Configuration
-
-Each deployment includes:
-
-- Container image
-- Resource requests and limits
-- Environment variables
-- Liveness probe
-- Readiness probe
-- Labels and selectors
-
-Example deployment features:
-
-```yaml
-resources:
-  requests:
-    memory: "128Mi"
-    cpu: "100m"
-  limits:
-    memory: "256Mi"
-    cpu: "200m"
-```
-
-Example health probes:
-
-```yaml
-livenessProbe:
-  httpGet:
-    path: /
-    port: 3000
-
-readinessProbe:
-  httpGet:
-    path: /
-    port: 3000
-```
-
 ---
 
 # Deploy Application to Kubernetes
@@ -277,44 +225,16 @@ readinessProbe:
 kubectl apply -f deployments/
 ```
 
-Expected output:
-
-```text id="v9qup2"
-deployment.apps/user-service created
-deployment.apps/product-service created
-deployment.apps/order-service created
-deployment.apps/gateway-service created
-```
-
----
-
 ## Apply Services
 
 ```bash
 kubectl apply -f services/
 ```
 
-Expected output:
-
-```text id="mn06gf"
-service/user-service created
-service/product-service created
-service/order-service created
-service/gateway-service created
-```
-
----
-
 ## Apply Ingress (Optional)
 
 ```bash
 kubectl apply -f ingress/
-```
-
-Verify ingress:
-
-```bash
-kubectl get ingress
 ```
 
 ---
@@ -327,14 +247,10 @@ kubectl get ingress
 kubectl get pods
 ```
 
-Expected output:
+Expected:
 
-```text id="9y0vab"
-NAME                                READY   STATUS    RESTARTS   AGE
-gateway-service-xxxx               1/1     Running   0          1m
-order-service-xxxx                 1/1     Running   0          1m
-product-service-xxxx               1/1     Running   0          1m
-user-service-xxxx                  1/1     Running   0          1m
+```text id="kzjlwm"
+All pods should be in Running state
 ```
 
 ---
@@ -343,16 +259,6 @@ user-service-xxxx                  1/1     Running   0          1m
 
 ```bash
 kubectl get svc
-```
-
-Expected output:
-
-```text id="q2lws0"
-NAME              TYPE        CLUSTER-IP      PORT(S)
-gateway-service   ClusterIP   xxx.xxx.xxx.xxx 3003/TCP
-order-service     ClusterIP   xxx.xxx.xxx.xxx 3002/TCP
-product-service   ClusterIP   xxx.xxx.xxx.xxx 3001/TCP
-user-service      ClusterIP   xxx.xxx.xxx.xxx 3000/TCP
 ```
 
 ---
@@ -366,16 +272,6 @@ kubectl get deployments
 ---
 
 # Validate Inter-Service Communication
-
-Kubernetes service discovery works using service names.
-
-Example:
-
-```text id="n8zk9l"
-http://user-service:3000
-```
-
----
 
 ## Test User Service from Order Service
 
@@ -399,63 +295,78 @@ kubectl exec -it deployment/order-service -- curl http://product-service:3001
 kubectl exec -it deployment/gateway-service -- curl http://order-service:3002
 ```
 
-Expected response:
+---
 
-```text id="q91f6i"
-Service is reachable
+# Access Application Using Local IP
+
+Get Minikube IP:
+
+```bash
+minikube ip
+```
+
+Example output:
+
+```text id="a4gjmo"
+192.168.49.2
 ```
 
 ---
 
-# View Application Logs
+# Expose Gateway Service
 
-## Gateway Service Logs
+Temporarily expose Gateway Service using NodePort:
 
 ```bash
-kubectl logs deployment/gateway-service
+kubectl expose deployment gateway-service \
+--type=NodePort \
+--port=3003 \
+--target-port=3003 \
+--name=gateway-nodeport
+```
+
+Check service:
+
+```bash
+kubectl get svc
+```
+
+Example output:
+
+```text id="uljlwm"
+NAME               TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)
+gateway-nodeport   NodePort   10.98.10.10    <none>        3003:32003/TCP
 ```
 
 ---
 
-## Order Service Logs
+# Access Gateway Service from Browser
 
-```bash
-kubectl logs deployment/order-service
+Use the following URL:
+
+```text id="4l6vym"
+http://192.168.49.2:32003
+```
+
+Example API routes:
+
+```text id="c0hzps"
+http://192.168.49.2:32003/api/users
+
+http://192.168.49.2:32003/api/products
+
+http://192.168.49.2:32003/api/orders
 ```
 
 ---
 
-## User Service Logs
+# Ingress Testing (Optional Bonus)
+
+Check ingress:
 
 ```bash
-kubectl logs deployment/user-service
+kubectl get ingress
 ```
-
----
-
-# Port Forward Testing
-
-Expose Gateway Service locally:
-
-```bash
-kubectl port-forward svc/gateway-service 3003:3003
-```
-
-Open browser:
-
-```text id="jlwm5d"
-http://localhost:3003
-```
-
-Or test using curl:
-
-```bash
-curl http://localhost:3003
-```
-
----
-
-# Ingress Configuration Testing (Optional)
 
 Get Minikube IP:
 
@@ -465,7 +376,7 @@ minikube ip
 
 Example:
 
-```text id="nyr7mn"
+```text id="0n1m31"
 192.168.49.2
 ```
 
@@ -479,22 +390,46 @@ sudo nano /etc/hosts
 
 Windows:
 
-```text id="2u4x6j"
+```text id="fs8c1v"
 C:\Windows\System32\drivers\etc\hosts
 ```
 
-Add entry:
+Add:
 
-```text id="91rjbb"
+```text id="06xk6m"
 192.168.49.2 micro.local
 ```
 
 Test ingress routes:
 
-```text id="vh22q7"
+```text id="95c2to"
 http://micro.local/api/users
+
 http://micro.local/api/products
+
 http://micro.local/api/orders
+```
+
+---
+
+# View Logs
+
+Gateway Service logs:
+
+```bash
+kubectl logs deployment/gateway-service
+```
+
+Order Service logs:
+
+```bash
+kubectl logs deployment/order-service
+```
+
+User Service logs:
+
+```bash
+kubectl logs deployment/user-service
 ```
 
 ---
@@ -503,13 +438,9 @@ http://micro.local/api/orders
 
 ## Pod CrashLoopBackOff
 
-Check logs:
-
 ```bash
 kubectl logs <pod-name>
 ```
-
-Describe pod:
 
 ```bash
 kubectl describe pod <pod-name>
@@ -518,8 +449,6 @@ kubectl describe pod <pod-name>
 ---
 
 ## ImagePullBackOff Error
-
-Ensure images are built inside Minikube Docker environment:
 
 ```bash
 eval $(minikube docker-env)
@@ -531,13 +460,9 @@ Rebuild images if required.
 
 ## Service Not Reachable
 
-Check services:
-
 ```bash
 kubectl get svc
 ```
-
-Check endpoints:
 
 ```bash
 kubectl get endpoints
@@ -587,21 +512,19 @@ minikube delete
 
 ---
 
-# Screenshots Required
-
-Following screenshots:
+# Screenshots
 
 | Screenshot | Command |
 |---|---|
 | Running Pods | kubectl get pods |
 | Running Services | kubectl get svc |
 | Logs | kubectl logs deployment/gateway-service |
-| Port Forward Test | Browser or curl output |
+| Local IP Test | Browser output using Minikube IP |
 | Ingress Test | Browser output |
 
 Store screenshots inside:
 
-```text id="fdtvxj"
+```text id="0z9j0v"
 screenshots/
 ```
 
@@ -609,14 +532,12 @@ screenshots/
 
 # Expected Outcome
 
-After successful deployment:
-
-- All pods should be running
-- Services should communicate internally
-- Gateway should route requests correctly
-- Health checks should pass
-- Ingress routing should work properly
-- No pod crashes or networking issues
+- All pods running successfully
+- Services communicating internally
+- Gateway accessible using local Minikube IP
+- APIs reachable from browser
+- Ingress routing working correctly
+- Health probes passing
 
 ---
 
@@ -624,7 +545,7 @@ After successful deployment:
 
 Create final ZIP file:
 
-```text id="4d6d4u"
+```text id="8s8qq4"
 submission.zip
 ```
 
