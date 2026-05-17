@@ -589,7 +589,7 @@ minikube delete
 
 # Screenshots Required
 
-Capture the following screenshots:
+Following screenshots:
 
 | Screenshot | Command |
 |---|---|
